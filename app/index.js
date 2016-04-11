@@ -79,7 +79,7 @@ var Typeahead = React.createClass({
 		else
 		{
 			$('#dropdownColl').collapse('hide');
-			this.setState({books:[]});
+			this.setState({books:[]}); // resets state variable
 		}
 	},
 
