@@ -15,20 +15,22 @@ var Dropdown = React.createClass({
 			if (isAuthor)
 			{
 				var numAuthors = book.author.length;
-				for (var i = 0; i < numAuthors; i++) {
+				for (var i = 0; i < numAuthors; i++)
+				{
 					authorStr += book.author[i];
 					if (numAuthors > 1 && i < numAuthors - 1)
-						authorStr += ", "
+					{
+						authorStr += ", ";
+					}
 				}
 			}
-
 			return(
 				<li key={index++}>
-					<a href={book.link} target="_blank">
+					<a href={book.link} target={"_blank"}>
 						{ book.title + (isAuthor ? authorStr : "") }
 					</a>
 				</li>
-				);
+			);
 		});
 
 		return (
