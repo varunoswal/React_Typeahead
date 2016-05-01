@@ -1,33 +1,17 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var helpers = require('./helpers');
 
 // A dropdown panel component that lists 5 books and is nested within Typeahead component
 var Dropdown = React.createClass({
 	render: function(){
 		var index = 0;
-
-		// Map each book retrieved as props to a list item to be rendered
+		// Map each book retrieved as props to a list of items to be rendered
  		var listItems = this.props.books.map(function(book){
-			var authorStr = " by ";
-			var isAuthor = book.author == undefined ? false:true;
-
-			// Create author string if data retrieved contains authors array for this book
-			if (isAuthor)
-			{
-				var numAuthors = book.author.length;
-				for (var i = 0; i < numAuthors; i++)
-				{
-					authorStr += book.author[i];
-					if (numAuthors > 1 && i < numAuthors - 1)
-					{
-						authorStr += ", ";
-					}
-				}
-			}
 			return(
 				<li key={index++}>
 					<a href={book.link} target={"_blank"}>
-						{ book.title + (isAuthor ? authorStr : "") }
+						{ book.title + authorStr }
 					</a>
 				</li>
 			);
@@ -58,25 +42,14 @@ var Typeahead = React.createClass({
 	update: function(){
 		var _this = this;
 		var txtInput = document.getElementById('txtInput').value; // Get user input
-		if (txtInput.length > 0)
+		if (txtInput.length > 0) // and last keystroke longer than some ms
 		{
-			$('#dropdownColl').collapse('show');
-			$.ajax({
-				url:"https://www.googleapis.com/books/v1/volumes?q="+ txtInput +"&country=US&maxResults=5",
-				type:"GET",
-				success: function(data){
-					var items = data['items'];
-					if (items != undefined)
-					{
-						var res = [];
-						for (var i = 0; i<items.length; i++)
-						{
-							res.push({"title": items[i]["volumeInfo"]["title"], "author": items[i]["volumeInfo"]["authors"], "link": items[i]["accessInfo"]["webReaderLink"]});
-						}
-						_this.setState({books:res});
-					}
-				}
-			});
+			var res = [];
+			helpers.getBooksList(txtInput)
+			   .then(function(results){
+			  	$('#dropdownColl').collapse('show');
+			  	_this.setState({books:results});
+			  })
 		}
 		else
 		{
